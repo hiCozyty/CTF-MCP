@@ -358,7 +358,12 @@ def main():
     """Main entry point"""
     logger.info("Starting CTF-MCP Server...")
     register_tools()
-    asyncio.run(stdio_server(app))
+
+    async def run():
+        async with stdio_server() as (read_stream, write_stream):
+            await app.run(read_stream, write_stream, app.create_initialization_options())
+
+    asyncio.run(run())
 
 
 if __name__ == "__main__":
